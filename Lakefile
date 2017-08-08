@@ -1,0 +1,20 @@
+#|-*- mode:lisp -*-|#
+(in-package :cl-user)
+(defpackage :lake.user
+  (:use :cl :lake :cl-syntax)
+  (:shadowing-import-from :lake
+                          :directory))
+(in-package :lake.user)
+
+(use-syntax :interpol)
+
+(task "default" ())
+
+(task "test" ()
+      (ql:quickload :jomon)
+      (ql:quickload :jomon-test)
+      (asdf:test-system :jomon))
+
+(task "migration" ()
+      (sh "tachikoma -c ./src/config.lisp -d ./migration/ -p jomon.config down")
+      (sh "tachikoma -c ./src/config.lisp -d ./migration/ -p jomon.config up"))

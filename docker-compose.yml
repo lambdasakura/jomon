@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+    jomon:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        working_dir: /usr/src/app
+        volumes:
+            - "./:/usr/src/app"
+        environment:
+            NODE_ENV: development
+    jomon-test:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        working_dir: /usr/src/app
+        volumes:
+            - "./:/usr/src/app"
+        command: bash -c "lake migration && lake test"
+        # command: ./test.sh
+
+    db:
+        image: postgres
+        environment:
+            POSTGRES_PASSWORD: example
+            POSTGRES_DB: jomon
