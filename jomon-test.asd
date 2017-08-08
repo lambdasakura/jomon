@@ -13,10 +13,12 @@
                :datafly
                :jonathan
                :cl-json
+               :cl-interpol
                :prove)
   :components ((:module "t"
                 :components
-                ((:file "jomon")
+                ((:file "utils")
+                 (:file "jomon")
                  (:file "jomon-model"))))
   :description "Test system for jomon-server"
   :defsystem-depends-on (:prove-asdf)

@@ -34,6 +34,12 @@
 (defroute "/" ()
   (render-json "hello, world"))
 
+(defroute "/accounts/:account_id" (&key account_id)
+  (let ((account (find-account :uuid account_id)))
+    (if account
+        (render-json account)
+        nil)))
+
 ;;
 ;; Error pages
 

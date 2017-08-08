@@ -6,6 +6,7 @@
         :jomon.config
         :jomon.model
         :jomon.db
+        :jomon.test.utils
         :local-time
         :uuid
         :datafly
@@ -19,12 +20,6 @@
 
 (setf (osicat:environment-variable "APP_ENV") "development")
 (plan nil)
-
-(defun clear-database ()
-  (with-connection (db)
-    (execute (delete-from :account))
-    (execute (delete-from :notebook))
-    (execute (delete-from :page))))
 
 ;;
 ;; Test Starting
