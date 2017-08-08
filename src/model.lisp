@@ -24,6 +24,8 @@
            :account-name
            :account-password
            :account-image
+           :account-notebooks
+           :account-pages
            :account-createdat
            :account-updatedat
            :save-account
@@ -32,6 +34,7 @@
            :update-account
            :generate-hash
            :generate-token
+           :validate-token
            :authenticate-account
 
            :find-page
@@ -85,8 +88,15 @@
    (ironclad:ascii-string-to-byte-array password)))
 
 (defun generate-token (account)
-  (jose:encode :hs256 *key*
-               `((uuid . ,(account-uuid account)))))
+    (jose:encode :hs256 *key*
+                 `((uuid . ,(account-uuid account))
+                   (name . ,(account-name account)))))
+
+(defun validate-token (token)
+  (block main
+    (handler-bind ((error
+                    (lambda (c) (return-from main nil))))
+    (jose:decode :hs256 *key* token))))
 
 (defun authenticate-account (account password)
   (setf ironclad:*prng* (make-prng :FORTUNA :seed :urandom))
@@ -115,7 +125,14 @@
 ;;;
 ;;; Account model
 ;;;
-(defmodel (account)
+(defmodel (account (:has-many (notebooks notebook)
+                              (select :*
+                                (from :notebook)
+                                (where (:= :accountId id))))
+                   (:has-many (pages page)
+                              (select :*
+                                (from :page)
+                                (where (:= :accountId id)))))
   id
   uuid
   name
