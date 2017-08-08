@@ -91,7 +91,7 @@
 (defun authenticate-account (account password)
   (setf ironclad:*prng* (make-prng :FORTUNA :seed :urandom))
   (let ((hash (account-password account)))
-    (pbkdf2-check-password (ascii-string-to-byte-array password) hash)))
+      (pbkdf2-check-password (ascii-string-to-byte-array password) hash)))
 
 (defun group (source n)
   (if (zerop n) (error "zero length"))
@@ -135,10 +135,15 @@
                                   :updatedAt (princ-to-string date)
                                   :createdAt (princ-to-string date)))))))
 
-(defun find-account (&key uuid)
-  (with-connection (db)
-      (retrieve-one
-       (select :* (from :account) (where (:= :uuid uuid))) :as 'account)))
+(defun find-account (&key uuid name)
+  (cond (name
+         (with-connection (db)
+           (retrieve-one
+            (select :* (from :account) (where (:= :name name))) :as 'account)))
+        (uuid
+         (with-connection (db)
+           (retrieve-one
+            (select :* (from :account) (where (:= :uuid uuid))) :as 'account)))))
 
 (defun get-all-account ()
   (with-connection (db)

@@ -57,6 +57,17 @@
               :password (generate-hash (format nil "password"))
               :image (format nil "image")
               :date (princ-to-string (local-time:now))))
+
+  (destructuring-bind (status headers body)
+      (funcall test-app (generate-env #?"/auth/"
+                                      :method :post
+                                      :content
+                                      `(("name" . "test_account")
+                                        ("password" . "password"))))
+    (is status 200)
+    (is (getf headers :content-type) "application/json")
+    (isnt (getf (jojo:parse (first body)) :|token|) nil))
+
   (destructuring-bind (status headers body)
       (funcall test-app (generate-env #?"/accounts/${target-uuid}"))
     (is status 200)

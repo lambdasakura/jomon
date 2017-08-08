@@ -34,6 +34,11 @@
 (defroute "/" ()
   (render-json "hello, world"))
 
+(defroute ("/auth/" :method :POST) (&key |name| |password|)
+  (let ((account (find-account :name |name|)))
+    (if (authenticate-account account |password|)
+        (render-json `(:token ,(generate-token account))))))
+
 (defroute "/accounts/:account_id" (&key account_id)
   (let ((account (find-account :uuid account_id)))
     (if account
